@@ -1,0 +1,47 @@
+from sys import argv
+import pyaudio 
+import wave
+import keyboard
+import time 
+import colorama
+from colorama import Fore,Style,Cursor
+def minToSec(value):
+    return value*60.0
+def timeString(value):
+    mins, secs = divmod(value, 60)
+    return f"{int(mins):02d}:{int(secs):02d}"
+
+def play_sound(file_path):
+    wf = wave.open(file_path,'rb')
+
+    p = pyaudio.PyAudio()
+    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True)
+
+    chunk_size = 1024
+    data = wf.readframes(chunk_size)
+    while data:
+        stream.write(data)
+        data = wf.readframes(chunk_size)
+        if keyboard.is_pressed('escape'):
+            break
+    stream.stop_stream()
+    stream.close() 
+    p.terminate()
+
+timeInterval = 0.3
+if len(argv) < 2:
+   print("No time was supplied, using default time of 25 minutes")
+else: 
+    if(argv[1].isnumeric()):
+        timeInterval = float(argv[1])
+colorama.init()
+startTime = time.time()
+
+while time.time() - startTime < minToSec(timeInterval):
+    current = minToSec(timeInterval)-  (time.time() - startTime)
+    print(f"\r{Fore.GREEN}{timeString(current)}{Style.RESET_ALL}",end="")
+
+play_sound('EndOfWork.wav')
