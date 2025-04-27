@@ -7,7 +7,12 @@ import colorama
 from colorama import Fore,Style,Cursor
 
 
-
+def printProgressBar(totalProgress):
+    print(f"\r{Fore.GREEN}[",end="")
+    filled = int(totalProgress*80)*'#'
+    unfilled = (80 - int(totalProgress*80))*'.'
+    print(f"{Fore.YELLOW}{filled}{Fore.RED}{unfilled}",end="")
+    print(f"{Fore.GREEN}]{Style.RESET_ALL}",end="")
 class TimerHandler:
     timerStates : dict = {
         "work" : 1,
@@ -26,7 +31,9 @@ class TimerHandler:
         interval = self.timerStates[self.state] 
         while time.time() - startTime < minToSec(interval):
             current = minToSec(interval)-  (time.time() - startTime)
-            print(f"\r{Fore.GREEN}{timeString(current)}{Style.RESET_ALL}",end="")
+            #print(f"\r{interval/current}{Style.RESET_ALL}",end="") 
+            printProgressBar(1.0 - current/minToSec(interval)) 
+            #print(f"\r{Fore.GREEN}{timeString(current)}{Style.RESET_ALL}",end="")
             if keyboard.is_pressed("escape"):
                 break
         
