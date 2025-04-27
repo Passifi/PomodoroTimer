@@ -5,6 +5,44 @@ import keyboard
 import time 
 import colorama
 from colorama import Fore,Style,Cursor
+
+
+
+class TimerHandler:
+    timerStates : dict = {
+        "work" : 1,
+        "shortbreak" : 2,
+        "longbreak" : 3
+    }
+    def __init__(self, workInterval, breakInterval,total):
+        self.timerStates["work"] = workInterval
+        self.timerStates["shortbreak"] = breakInterval
+        self.timerStates["longbreak"] = breakInterval*3.0
+        self.total = total
+        self.state = "work"
+        self.currentSession = 0
+    def runTimer(self):
+        startTime = time.time()
+        interval = self.timerStates[self.state] 
+        while time.time() - startTime < minToSec(interval):
+            current = minToSec(interval)-  (time.time() - startTime)
+            print(f"\r{Fore.GREEN}{timeString(current)}{Style.RESET_ALL}",end="")
+            if keyboard.is_pressed("escape"):
+                break
+        
+        self.currentSession += interval
+        if self.state == "work": 
+            play_sound('EndOfWork.wav')
+            self.state = "shortbreak"
+            if(self.currentSession >= self.total):
+                print("Congrats your work is done!")
+                # play allDone here  
+                return 
+        else:
+            play_sound('BreakIsOver.wav')
+            self.state = "work"
+        self.runTimer()
+
 def minToSec(value):
     return value*60.0
 def timeString(value):
@@ -31,17 +69,21 @@ def play_sound(file_path):
     stream.close() 
     p.terminate()
 
-timeInterval = 0.3
-if len(argv) < 2:
+def runTimer(interval):
+    startTime = time.time()
+
+    while time.time() - startTime < minToSec(interval):
+        current = minToSec(interval)-  (time.time() - startTime)
+        print(f"\r{Fore.GREEN}{timeString(current)}{Style.RESET_ALL}",end="")
+
+    play_sound('EndOfWork.wav')
+timeInterval = 1
+if len(argv) < 1 and argv[1].isnumeric():
    print("No time was supplied, using default time of 25 minutes")
+   timeInterval = 25
 else: 
-    if(argv[1].isnumeric()):
-        timeInterval = float(argv[1])
+    timeInterval = float(argv[1])
+
 colorama.init()
-startTime = time.time()
-
-while time.time() - startTime < minToSec(timeInterval):
-    current = minToSec(timeInterval)-  (time.time() - startTime)
-    print(f"\r{Fore.GREEN}{timeString(current)}{Style.RESET_ALL}",end="")
-
-play_sound('EndOfWork.wav')
+timer = TimerHandler(timeInterval,5.0,(timeInterval+5)*4)
+timer.runTimer()
