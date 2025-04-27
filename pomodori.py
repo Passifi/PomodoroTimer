@@ -1,4 +1,5 @@
 from sys import argv
+from os import get_terminal_size
 import pyaudio 
 import wave
 import keyboard
@@ -9,8 +10,10 @@ from colorama import Fore,Style,Cursor
 
 def printProgressBar(totalProgress):
     print(f"\r{Fore.GREEN}[",end="")
-    filled = int(totalProgress*80)*'#'
-    unfilled = (80 - int(totalProgress*80))*'.'
+    tsize = get_terminal_size() 
+    
+    filled = int(totalProgress*(tsize.columns-3))*'#'
+    unfilled = (tsize.columns -3 - int(totalProgress*tsize.columns))*'.'
     print(f"{Fore.YELLOW}{filled}{Fore.RED}{unfilled}",end="")
     print(f"{Fore.GREEN}]{Style.RESET_ALL}",end="")
 class TimerHandler:
