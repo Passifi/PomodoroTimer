@@ -18,9 +18,6 @@ def printProgressBar(totalProgress):
     print(f"{Fore.GREEN}]{Style.RESET_ALL}",end="")
 class TimerHandler:
     timerStates : dict = {
-        "work" : 1,
-        "shortbreak" : 2,
-        "longbreak" : 3
     }
     def __init__(self, workInterval, breakInterval,total):
         self.timerStates["work"] = workInterval
@@ -38,6 +35,7 @@ class TimerHandler:
             printProgressBar(1.0 - current/minToSec(interval)) 
             #print(f"\r{Fore.GREEN}{timeString(current)}{Style.RESET_ALL}",end="")
             if keyboard.is_pressed("escape"):
+                print(interval)
                 break
         
         self.currentSession += interval
@@ -54,7 +52,7 @@ class TimerHandler:
         self.runTimer()
 
 def minToSec(value):
-    return value*60.0
+    return float(value*60.0)
 def timeString(value):
     mins, secs = divmod(value, 60)
     return f"{int(mins):02d}:{int(secs):02d}"
@@ -87,13 +85,13 @@ def runTimer(interval):
         print(f"\r{Fore.GREEN}{timeString(current)}{Style.RESET_ALL}",end="")
 
     play_sound('EndOfWork.wav')
-timeInterval = 1
-if len(argv) < 1 and argv[1].isnumeric():
+timeInterval = 25
+if len(argv) <= 1:
    print("No time was supplied, using default time of 25 minutes")
    timeInterval = 25
 else: 
-    timeInterval = float(argv[1])
-
+    if argv[1].isnumeric():
+        timeInterval = float(argv[1])
 colorama.init()
 timer = TimerHandler(timeInterval,5.0,(timeInterval+5)*4)
 timer.runTimer()
