@@ -34,9 +34,6 @@ class TimerHandler:
             #print(f"\r{interval/current}{Style.RESET_ALL}",end="") 
             printProgressBar(1.0 - current/minToSec(interval)) 
             #print(f"\r{Fore.GREEN}{timeString(current)}{Style.RESET_ALL}",end="")
-            if keyboard.is_pressed("escape"):
-                print(interval)
-                break
         
         self.currentSession += interval
         if self.state == "work": 
