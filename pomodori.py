@@ -1,5 +1,5 @@
 from sys import argv
-from os import get_terminal_size
+from os import get_terminal_size, system 
 import pyaudio 
 import wave
 import keyboard
@@ -7,11 +7,15 @@ import time
 import colorama
 from colorama import Fore,Style,Cursor
 
-
+tsize = get_terminal_size()
+clear = lambda:  system("cls")
 def printProgressBar(totalProgress):
+    global tsize 
     print(f"\r{Fore.GREEN}[",end="")
-    tsize = get_terminal_size() 
-    
+    tsizeNew = get_terminal_size() 
+    if(tsizeNew.columns != tsize.columns): 
+       tsize = tsizeNew 
+       clear()   
     filled = int(totalProgress*(tsize.columns-3))*'#'
     unfilled = (tsize.columns -3 - int(totalProgress*tsize.columns))*'.'
     print(f"{Fore.YELLOW}{filled}{Fore.RED}{unfilled}",end="")
