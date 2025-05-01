@@ -5,10 +5,15 @@ import wave
 import keyboard
 import time 
 import colorama
+from plyer import notification
 from colorama import Fore,Style,Cursor
-
 tsize = get_terminal_size()
 clear = lambda:  system("cls")
+
+def notifyUser(s):
+
+    notification.notify(title="Hi", message=s,timeout=22)
+
 def printProgressBar(totalProgress):
     global tsize 
     print(f"\r{Fore.GREEN}[",end="")
@@ -41,8 +46,10 @@ class TimerHandler:
         
         self.currentSession += interval
         if self.state == "work": 
+            
             play_sound('EndOfWork.wav')
             self.state = "shortbreak"
+            notifyUser("End of Work interval")
             if(self.currentSession >= self.total):
                 print("Congrats your work is done!")
                 # play allDone here  
@@ -50,6 +57,7 @@ class TimerHandler:
         else:
             play_sound('BreakIsOver.wav')
             self.state = "work"
+            notifyUser("End of break") 
         self.runTimer()
 
 def minToSec(value):
